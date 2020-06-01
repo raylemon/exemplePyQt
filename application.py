@@ -21,6 +21,7 @@ class Application(QMainWindow, Ui_MainWindow):  # Recette de cuisine ligne1
     def saveProject(self):
         self.btnSaveProject.setEnabled(False)
         self.btnCreateProject.setEnabled(True)
+        lri = db.create_project(self.connect, self.cbProjectName.currentText(),self.deProjectBeginDate.text(),self.deProjectEndDate.text(),self.err_callback)
 
     def updateProject(self):
         pass
@@ -46,6 +47,7 @@ class Application(QMainWindow, Ui_MainWindow):  # Recette de cuisine ligne1
             filter=self.tr("Fichier DB (*.db)"),
         )
         self.connect = db.connect(filename,self.err_callback)
+        #TODO récupérer les projets
 
     def newDB(self):
         filename, filter = QFileDialog().getSaveFileName(

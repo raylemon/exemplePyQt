@@ -17,7 +17,7 @@ def connect(db_file, err_callback):
     return connect
 
 
-def create_tables(connect:sqlite3.Connection,err_callback):
+def create_tables(connect: sqlite3.Connection, err_callback):
     """
     Crée les 2 tables requises pour le projet
     :param connect: Objet de connexion à la db
@@ -43,6 +43,16 @@ def create_tables(connect:sqlite3.Connection,err_callback):
     try:
         connect.execute(sql_projects)
         connect.execute(sql_tasks)
-        #connect.commit()
+    except Error as e:
+        err_callback(e)
+
+
+def create_project(conn: sqlite3.Connection, p_name: str, p_date_b: str, p_date_e: str, err_callback):
+    sql = """insert into T_PROJECTS (NAME_PROJECT, DATE_BEGIN_PROJECT, DATE_END_PROJECT) values (?,?,?)"""
+    try:
+        cursor = conn.cursor()
+        cursor.execute(sql, (p_name, p_date_b, p_date_e))
+        conn.commit()
+        return cursor.lastrowid  # n° de clé primaire
     except Error as e:
         err_callback(e)
