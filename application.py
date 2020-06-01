@@ -1,7 +1,8 @@
 import sys
+import db
 
 from PyQt5.QtCore import QTranslator, QLocale
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 
 from ui_main import Ui_MainWindow
 
@@ -10,6 +11,7 @@ class Application(QMainWindow, Ui_MainWindow):  # Recette de cuisine ligne1
     def __init__(self, parent=None):  # ligne2
         super().__init__(parent)  # ligne 3
         self.setupUi(self)  # ligne 4
+        self.connect = None # connexion à la db
 
     # Notre code python
     def createProject(self):
@@ -43,14 +45,18 @@ class Application(QMainWindow, Ui_MainWindow):  # Recette de cuisine ligne1
             caption=self.tr("Ouvrir un fichier DB"),
             filter=self.tr("Fichier DB (*.db)"),
         )
-        print(filename)
+        self.connect = db.connect(filename,self.err_callback)
 
     def newDB(self):
         filename, filter = QFileDialog().getSaveFileName(
             caption=self.tr("Creer un nouveau fichier DB"),
             filter=self.tr("Fichier DB (*.db)")
         )
-        print(filename)
+        self.connect = db.connect(filename,self.err_callback)
+        db.create_tables(self.connect,self.err_callback)
+
+    def err_callback(self,message):
+        QMessageBox.critical(title=self.tr("Erreur"),text=message)
 
 
 # Lancement du programme principal
